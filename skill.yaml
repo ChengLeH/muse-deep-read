@@ -1,0 +1,10 @@
+name: local_deepread
+title: Local deepread
+description: 'Semantic document retrieval without external dependencies: extract text from PDF/DOCX/XLSX, expand query into related keywords, filter candidate passages, then deep-read them for the answer. Use when the user asks a question about a long document.'
+include_in_prompt: true
+availability:
+  confidential_vm: true
+  needs_speech: false
+skill_improvement:
+  managed: true
+  needs_review: true

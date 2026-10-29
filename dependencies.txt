@@ -1,0 +1,45 @@
+# Deep Read — dependencies (versions as installed on the VM, 2026-10-19)
+# Runtime: Python 3.12.3
+
+# --- Core extraction (Step 1 Extract / Visual Evidence Gate) ---
+PyMuPDF==1.28.2        # import fitz — PDF full-text extraction, page rendering,
+                       # find_tables, image/vector inspection
+Pillow==10.2.0         # crop / upscale of rendered pages for visual reading
+
+# --- Table-structure re-extraction (only for table-heavy candidate pages) ---
+docling==2.140.0
+docling-core==2.102.0
+docling-parse==7.22.3
+docling-ibm-models==4.0.3
+docling-slim==2.140.0
+torch==2.14.1          # pulled in by docling
+torchvision==0.29.1
+pypdfium2==5.14.0      # pulled in by docling
+
+# --- OCR for scanned pages (docling_extract.py --ocr) ---
+rapidocr==3.10.0       # OCR engine used by Docling's OCR path
+onnxruntime==1.31.0    # RapidOCR runtime; without it the OCR path fails
+                       # with "onnxruntime is not installed"
+
+# --- Fetching official documents ---
+requests==2.34.2       # download datasheets / TRMs from vendor sites
+
+# --- Other document formats (Step 1) ---
+python-docx==1.2.0     # DOCX extraction (paragraphs)
+openpyxl==3.1.5        # XLSX extraction (cells, sheet/row preserved)
+
+# --- System tools (not pip) ---
+# ripgrep (rg)           Step 3 Filter over extracted text chunks
+# poppler-utils          pdftotext — optional fallback extractor
+
+# --- Environment notes (learned the hard way) ---
+# * docling install/run needs a roomy TMPDIR:
+#     TMPDIR=~/tmp pip3 install --user --break-system-packages docling
+#   (a small /tmp makes the install die with ENOSPC)
+# * NO_PROXY and no_proxy must be emptied before docling downloads models:
+#     NO_PROXY= no_proxy= python3 ...
+#   httpx crashes parsing bracketed IPv6 entries (e.g. [::1]) in no_proxy.
+# * docling model cache lives in ~/.cache/huggingface (~500 MB).
+# * PyMuPDF alone covers the whole Visual Evidence Gate (render, crop,
+#   get_drawings, get_images, find_tables); docling is only for pages where
+#   table structure matters.
